@@ -3,6 +3,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { userSerializer } from './serializers';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
       delete user.hash;
 
       // return the saved user
-      return user;
+      return userSerializer(user);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -40,6 +41,7 @@ export class AuthService {
         email: dto.email,
       },
     });
-    return user;
+
+    return userSerializer(user);
   }
 }
